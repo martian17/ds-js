@@ -116,6 +116,9 @@ export class UpdatableMinHeap extends MinHeapBase{
 	}
 	add(item,p){
 		//console.log("adding", p);
+		if(this.has(item)){
+			return this.update(item,p);
+		}
 		this.bubbleUp(this.heap.length,item,p);
 	}
 	pop(){
@@ -177,6 +180,15 @@ export class UpdatableMinHeap extends MinHeapBase{
 		}
 		return true;
 	}
+	isEmpty(){
+		return this.heap.length === 1;
+	}
+	has(item){
+		this.idxMap.has(item);
+	}
 };
+
+//alias
+UpdatableMinHeap.prototype.set = UpdatableMinHeap.prototype.add;
 
 
