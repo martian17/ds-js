@@ -2,10 +2,11 @@ import {arrcpy} from "./arrutil.mjs";
 import {rand32,shiftCombine32} from "./bitutil.mjs";
 import {newMapTally,mapeq} from "./maputil.mjs";
 
-class MultiMap{
+export class MultiMap{
     map = new Map;
     own = Symbol();// unique value that doesn't collide
-    set(){
+    size = 0;
+	set(){
         let lst = [...arguments];
         let val = lst.pop();
         let map = this.map;
@@ -13,7 +14,8 @@ class MultiMap{
             if(!map.has(k))map.set(k,new Map);
             map = map.get(k);
         }
-        map.set(this.own,val);// to avoid collision between the same level
+        if(!map.has(this.own))this.size++;
+		map.set(this.own,val);// to avoid collision between the same level
         return val;
     }
     get(...lst){
@@ -48,6 +50,7 @@ class MultiMap{
                 break;
             }
         }
+		if(ret)this.size--;
         return ret;
     }
     
@@ -83,7 +86,8 @@ export class OrderAgnosticMultiMap{
     hashes = new Map;
     uses = new Map;
     contentMap = new Map;
-    
+    size = 0;
+
     //sum of all hashes
     createMush(tally){
         let {hashes} = this;
@@ -187,7 +191,8 @@ export class OrderAgnosticMultiMap{
             }
         }
         //if no match is found in the bucket
-        this.incrementUses(tally);
+        this.size++;
+		this.incrementUses(tally);
         bucket.push([tally,val]);
     }
     
@@ -232,6 +237,7 @@ export class OrderAgnosticMultiMap{
                 }else{
                     bucket.splice(i,1);
                 }
+				this.size--;
                 this.decrementUses(tally);
                 return true;
             }
