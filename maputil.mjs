@@ -46,4 +46,12 @@ export const newMapTally = function(lst){
     return map;
 };
 
+export const mapcpy = function(map){
+    let map1 = new Map;
+    for(let [key,val] of map){
+        map1.set(key,val);
+    }
+    return map1;
+};
+
 
