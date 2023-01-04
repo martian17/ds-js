@@ -213,13 +213,13 @@ export class OrderAgnosticMultiMap{
         let tally = newMapTally(lst);
         let bucket = this.getBucket(tally);
         if(bucket === null){
-            return undefined;
+            return false;
         }
         //find the match in the bucket
         for(let [tally1,val] of bucket){
             if(mapeq(tally,tally1))return true;
         }
-        return undefined;
+        return false;
     }
     
     delete(...lst){
