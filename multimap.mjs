@@ -187,13 +187,14 @@ export class OrderAgnosticMultiMap{
             let [tally1] = slot;
             if(mapeq(tally,tally1)){
                 slot[1] = val;
-                return;
+                return val;
             }
         }
         //if no match is found in the bucket
         this.size++;
 		this.incrementUses(tally);
         bucket.push([tally,val]);
+        return val
     }
     
     get(...lst){
