@@ -29,6 +29,7 @@ export const range = function(a,b){
             arr.push(i);
         }
     }
+    return arr;
 };
 
 export const arreq = function(a,b,cb){
