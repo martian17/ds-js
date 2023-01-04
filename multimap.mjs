@@ -1,4 +1,4 @@
-import {arrcpy} from "./arrutil.mjs";
+import {arrcpy,arreq} from "./arrutil.mjs";
 import {rand32,shiftCombine32} from "./bitutil.mjs";
 import {newMapTally,mapeq} from "./maputil.mjs";
 
@@ -77,6 +77,177 @@ export class MultiMap{
     }
 };
 
+
+export class MultiMapAlpha{
+    hashes = new Map;
+    uses = new Map;
+    contentMap = new Map;
+    size = 0;
+    
+    //sum of all hashes
+    createMush(lst){
+        let {hashes} = this;
+        let mush = 0;
+        for(let obj of lst){
+            let hash;
+            if(hashes.has(obj)){
+                hash = hashes.get(obj);
+            }else{
+                hash = rand32();
+                hashes.set(obj,hash);
+            }
+            mush = shiftCombine32(mush,hash);
+        }
+        return mush;
+    }
+    
+    getMush(lst){//[mush,err]
+        let {contentMap,hashes} = this;
+        let mush = 0;
+        for(let obj of lst){
+            let hash;
+            if(hashes.has(obj)){
+                hash = hashes.get(obj);
+            }else{
+                return [0,true];
+            }
+            mush = shiftCombine32(mush,hash);
+        }
+        if(!contentMap.has(mush)){
+            return [0,true];
+        }
+        return [mush,false];
+    }
+    
+    getBucket(lst){
+        let [mush,err] = this.getMush(lst);
+        if(err){
+            return null;
+        }
+        return this.contentMap.get(mush);
+    }
+    
+    incrementUses(lst){
+        let {uses} = this;
+        for(let obj of lst){
+            if(uses.has(obj)){
+                uses.set(obj,uses.get(obj)+1);
+            }else{
+                uses.set(obj,1);
+            }
+        }
+    }
+    
+    hasHashes(lst){
+        let {hashes} = this;
+        for(let obj of lst){
+            if(!hashes.has(obj)){
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    decrementUses(lst){
+        let {uses,hashes} = this;
+        for(let obj of lst){
+            if(uses.has(obj)){
+                let cnt = uses.get(obj)-1;
+                if(cnt === 0){
+                    //deletion is important to prevent memory leak
+                    uses.delete(obj);
+                    hashes.delete(obj);
+                }else{
+                    uses.set(obj,cnt);
+                }
+            }else{
+                throw new Error("trying to decrement cnt for object that DNE");
+            }
+        }
+    }
+    
+    set(...lst){
+        let {contentMap} = this;
+        let val = lst.pop();
+        let mush = this.createMush(lst);
+        let bucket;
+        if(contentMap.has(mush)){
+            bucket = contentMap.get(mush);
+        }else{
+            bucket = [];
+            contentMap.set(mush,bucket);
+        }
+        for(let slot of bucket){
+            let [lst1] = slot;
+            if(arreq(lst,lst1)){
+                slot[1] = val;
+                return val;
+            }
+        }
+        //if no match is found in the bucket
+        this.size++;
+		this.incrementUses(lst);
+        bucket.push([lst,val]);
+        return val;
+    }
+    
+    get(...lst){
+        let bucket = this.getBucket(lst);
+        if(bucket === null){
+            return undefined;
+        }
+        //find the match in the bucket
+        for(let [lst1,val] of bucket){
+            if(arreq(lst,lst1))return val;
+        }
+        return undefined;
+    }
+    
+    has(...lst){
+        let bucket = this.getBucket(lst);
+        if(bucket === null){
+            return false;
+        }
+        //find the match in the bucket
+        for(let [lst1,val] of bucket){
+            if(arreq(lst,lst1))return true;
+        }
+        return false;
+    }
+    
+    delete(...lst){
+        let {contentMap} = this;
+        let [mush,err] = this.getMush(lst);
+        if(err)return false;
+        let bucket = contentMap.get(mush);
+        //find the match in the bucket
+        for(let i = 0; i < bucket.length; i++){
+            let [lst1,val] = bucket[i];
+            if(arreq(lst,lst1)){
+                if(bucket.length === 1){
+                    contentMap.delete(mush);
+                }else{
+                    bucket.splice(i,1);
+                }
+				this.size--;
+                this.decrementUses(lst);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    *iterator(){
+        for(let [_,bucket] of this.contentMap){
+            for(let pair of bucket){//pair == [tally,value]
+                yield pair;
+            }
+        }
+    }
+    [Symbol.iterator](){
+        return this.iterator();
+    }
+}
 
 
 
