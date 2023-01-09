@@ -12,7 +12,15 @@ export const arrcpy = function(arr){
         arr1.push(val);
     }
     return arr1;
-}
+};
+
+export const arrcpyDepth = function(arr,n){
+    if(n === 1){
+        return arrcpy(arr);
+    }else{
+        return arr.map(a=>arrcpyDepth(a,n-1));
+    }
+};
 
 export const range = function(a,b){
     if(b === undefined){
