@@ -78,7 +78,7 @@ export const arrLoopBack = function*(arr){
     }
 };
 
-export const peek(arr){
+export const peek = function(arr){
     return arr[arr.length-1];
 }
 
