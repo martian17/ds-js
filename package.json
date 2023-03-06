@@ -1,0 +1,12 @@
+{
+  "name": "ds-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "arrutil.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
