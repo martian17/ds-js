@@ -192,3 +192,11 @@ export class UpdatableMinHeap extends MinHeapBase{
 UpdatableMinHeap.prototype.set = UpdatableMinHeap.prototype.add;
 
 
+
+export class MaxHeap extends MinHeap{
+    add(item,p){
+	super.add(item,-p);
+    }
+}
+
+
