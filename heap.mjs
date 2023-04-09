@@ -21,6 +21,9 @@ class MinHeapBase{
 		}
 		console.log("----");
 	}
+	isEmpty(){
+		return this.heap.length === 1;
+	}
 };
 
 
@@ -179,9 +182,6 @@ export class UpdatableMinHeap extends MinHeapBase{
 			this.bubbleDown(idx,item,p);
 		}
 		return true;
-	}
-	isEmpty(){
-		return this.heap.length === 1;
 	}
 	has(item){
 		this.idxMap.has(item);
