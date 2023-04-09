@@ -24,7 +24,7 @@ class MinHeapBase{
 	isEmpty(){
 		return this.heap.length === 1;
 	}
-};
+}
 
 
 export class MinHeap extends MinHeapBase{
@@ -70,7 +70,7 @@ export class MinHeap extends MinHeapBase{
 		items[idx] = item;
 		return res;
 	}
-};
+}
 
 //with decrease key operation
 export class UpdatableMinHeap extends MinHeapBase{
@@ -160,7 +160,7 @@ export class UpdatableMinHeap extends MinHeapBase{
 	}
 	replace(item0,item,p){
 		//console.log("replacing");
-		let {items,heap,idxMap} = this;
+		let {heap,idxMap} = this;
 		let idx = idxMap.get(item0);
 		if(!idx)return false;
 		idxMap.delete(item0);
@@ -173,7 +173,7 @@ export class UpdatableMinHeap extends MinHeapBase{
 	}
 	update(item,p){
 		//console.log("updating");
-		let {items,heap,idxMap} = this;
+		let {heap,idxMap} = this;
 		let idx = idxMap.get(item);
 		if(!idx)return false;
 		if(heap[Math.floor(idx/2)] > p){
@@ -186,7 +186,7 @@ export class UpdatableMinHeap extends MinHeapBase{
 	has(item){
 		this.idxMap.has(item);
 	}
-};
+}
 
 //alias
 UpdatableMinHeap.prototype.set = UpdatableMinHeap.prototype.add;
