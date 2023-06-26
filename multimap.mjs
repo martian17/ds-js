@@ -6,7 +6,7 @@ export class MultiMap{
     map = new Map;
     own = Symbol();// unique value that doesn't collide
     size = 0;
-	set(){
+    set(){
         let lst = [...arguments];
         let val = lst.pop();
         let map = this.map;
@@ -428,4 +428,21 @@ export class OrderAgnosticMultiMap{
         return this.iterator();
     }
 };
+
+class MultiWeakMap extends MultiMap{
+    map = new WeakMap;
+    set(){
+        let lst = [...arguments];
+        let val = lst.pop();
+        let map = this.map;
+        for(let k of lst){
+            if(!map.has(k))map.set(k,new WeakMap);
+            map = map.get(k);
+        }
+        if(!map.has(this.own))this.size++;
+		map.set(this.own,val);// to avoid collision between the same level
+        return val;
+    }
+}
+
 
