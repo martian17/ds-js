@@ -24,6 +24,11 @@ class MinHeapBase{
 	isEmpty(){
 		return this.heap.length === 1;
 	}
+	ppop(){
+		const resp = this.heap[1];
+		const res = this.pop();
+		return [res,resp];
+	}
 }
 
 
